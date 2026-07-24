@@ -17,7 +17,9 @@ create table usuario(
 
 create table fornecedor(
 	id_forn int auto_increment primary key,
-	nome_forn varchar(200)
+	nome_forn varchar(200),
+	email varchar(200) unique,
+	endereco varchar(255)
 );
 create table categoria(
 	id_cat int auto_increment primary key,

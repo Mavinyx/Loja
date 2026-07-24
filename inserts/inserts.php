@@ -10,10 +10,18 @@ if($_POST){
     try{
         $tabela=$_POST['formulario'];
         $acao=$_POST['acao'];
-        echo $acao;
-        $id_prod = $_POST['id_prod'] ?? null;
+
+        $ids = [
+        "produto" => "id_prod",
+        "usuario" => "id_user",
+        "fornecedor" => "id_forn",
+        "categoria" => "id_cat",
+        "endereco" => "id_end"
+        ];
+        $campoId = $ids[$tabela];
+        $id = $_POST[$campoId] ?? null;
         $dados = $_POST;
-        unset($dados['formulario'], $dados['acao'], $dados['id_prod']);
+        unset($dados['formulario'], $dados['acao'], $dados[$campoId]);
 
         $colunas_array = array_keys($dados);
 
@@ -27,7 +35,7 @@ if($_POST){
                 $set_partes[] = "$col = :$col";
             }
             $set_upd = implode(', ', $set_partes);
-            $sql = "UPDATE $tabela SET $set_upd WHERE id_prod = :id_prod_where";
+            $sql = "UPDATE $tabela SET $set_upd WHERE $campoId = :id_where";
         }
 
         $stmt = $pdo->prepare($sql);
@@ -35,7 +43,7 @@ if($_POST){
             $stmt->bindValue(":$col", $valor);
         }
         if ($acao == 2) {
-            $stmt->bindValue(":id_prod_where", $id_prod);
+            $stmt->bindValue(":id_where", $id);
         }
 
         $stmt->execute();
