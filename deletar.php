@@ -6,7 +6,9 @@ $ids = [
     "usuario" => "id_user",
     "fornecedor" => "id_forn",
     "categoria" => "id_cat",
-    "endereco" => "id_end"
+    "endereco" => "id_end",
+    "venda" => "id_venda",
+    "prod_venda" => "id_prod_venda"
 ];
 
 $tabela = $_GET['formulario'] ?? '';
@@ -27,7 +29,7 @@ try {
     $sql="DELETE FROM $tabela WHERE $campoId = :id";
     $stmt=$pdo->prepare($sql);
     $stmt->execute([':id' => $id]);
-    header("Location: " . ($_SERVER['HTTP_REFERER'] ?? 'index.php'));
+    header("Location: index.php");
     exit;
 }catch(PDOException $e){
      echo "erro $e";

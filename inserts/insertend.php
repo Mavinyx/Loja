@@ -14,7 +14,7 @@ require_once __DIR__ . "/cabeçalho.php";
 <body>
     <form action="inserts.php" method="post">
         <input type="hidden" name="acao" value="<?= $acao ?>">
-        <input type="hidden" name="formulario" value="endereco">
+        <input type="hidden" name="formulario" value="<?= $tabela ?>">
 
         <?php if ($acao == 2 && isset($registro[$campoId])): ?>
         <input type="hidden" name="<?= $campoId ?>" value="<?= $registro[$campoId] ?>">

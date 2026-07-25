@@ -16,7 +16,9 @@ if($_POST){
         "usuario" => "id_user",
         "fornecedor" => "id_forn",
         "categoria" => "id_cat",
-        "endereco" => "id_end"
+        "endereco" => "id_end",
+        "venda" => "id_venda",
+        "prod_venda" => "id_prod_venda"
         ];
         $campoId = $ids[$tabela];
         $id = $_POST[$campoId] ?? null;
@@ -47,7 +49,12 @@ if($_POST){
         }
 
         $stmt->execute();
-        header("Location: ../index.php");
+        if ($tabela == "prod_venda" && isset($dados['id_venda'])) {
+            header("Location: form_prodvenda.php?id_venda=" . $dados['id_venda']);
+        } else {
+            header("Location: ../index.php");
+        }
+        exit;
     }catch(PDOException $e){
         echo "erro $e";
     }
