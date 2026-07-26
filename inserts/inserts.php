@@ -25,6 +25,16 @@ if($_POST){
         $dados = $_POST;
         unset($dados['formulario'], $dados['acao'], $dados[$campoId]);
 
+        if ($tabela == "prod_venda" && isset($dados['id_prod'], $dados['quant'])) {
+            $stmtPreco = $pdo->prepare("SELECT preco FROM produto WHERE id_prod = :id_prod");
+            $stmtPreco->execute([':id_prod' => $dados['id_prod']]);
+            $produto = $stmtPreco->fetch();
+
+            if ($produto) {
+                $dados['valor_venda_prd'] = $dados['quant'] * $produto['preco'];
+            }
+        }
+
         $colunas_array = array_keys($dados);
 
         if($acao==1){
@@ -49,6 +59,19 @@ if($_POST){
         }
 
         $stmt->execute();
+
+        if ($tabela == "prod_venda" && isset($dados['id_venda'])) {
+            $stmtTotal = $pdo->prepare("SELECT SUM(valor_venda_prd) AS total FROM prod_venda WHERE id_venda = :id_venda");
+            $stmtTotal->execute([':id_venda' => $dados['id_venda']]);
+            $resultadoTotal = $stmtTotal->fetch();
+
+            $stmtAtualizaVenda = $pdo->prepare("UPDATE venda SET valor_tot = :total WHERE id_venda = :id_venda");
+            $stmtAtualizaVenda->execute([
+                ':total' => $resultadoTotal['total'] ?? 0,
+                ':id_venda' => $dados['id_venda']
+            ]);
+        }
+
         if ($tabela == "prod_venda" && isset($dados['id_venda'])) {
             header("Location: form_prodvenda.php?id_venda=" . $dados['id_venda']);
         } else {

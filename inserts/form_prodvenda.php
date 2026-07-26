@@ -3,6 +3,7 @@ require_once "../conn.php";
 $tabela = "prod_venda";
 $campoId = "id_prod_venda";
 require_once __DIR__ . "/cabeçalho.php";
+$id_venda = $_GET['id_venda'] ?? ($registro['id_venda'] ?? '');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,20 +17,22 @@ require_once __DIR__ . "/cabeçalho.php";
         <input type="hidden" name="acao" value="<?= $acao ?>">
 
         <input type="hidden" name="formulario" value="<?= $tabela ?>">
-        <input type="hidden" name="id_venda" value="<?= $_GET['id_venda'] ?? ($registro['id_venda'] ?? '') ?>">
+        <input type="hidden" name="id_venda" value="<?= $id_venda ?>">
 
          <?php if ($acao == 2 && isset($registro[$campoId])): ?>
         <input type="hidden" name="<?= $campoId ?>" value="<?= $registro[$campoId] ?>">
         <?php endif; ?>
         <label for="id_prod">Produto:
-        <select name="id_prod" id="id_prod" value="<?= $registro['id_prod'] ?? '' ?>">
+        <select name="id_prod" id="id_prod">
             <option value="">Selecione um produto</option>
             <?php
             $stmt = $pdo->query("SELECT * FROM produto");
             $produtos = $stmt->fetchAll();
             foreach($produtos as $produto):
             ?>
-                <option value="<?= $produto['id_prod'] ?>"><?= $produto['nome_prod'] ?></option>
+                <option value="<?= $produto['id_prod'] ?>" <?= (($registro['id_prod'] ?? '') == $produto['id_prod']) ? 'selected' : '' ?>>
+                    <?= $produto['nome_prod'] ?>
+                </option>
             <?php
             endforeach;
             ?>
@@ -37,7 +40,7 @@ require_once __DIR__ . "/cabeçalho.php";
         <label for="quant">Quantidade:
         <input type="number" name="quant" id="quant" min="1" value="<?= $registro['quant'] ?? 1 ?>"></label>
         <input type="hidden" name="valor_venda_prd" value="<?= $registro['valor_venda_prd'] ?? '' ?>">
-        <input type="submit" value="Adicionar Produto">
+        <input type="submit" value="<?= $acao == 2 ? 'Atualizar Produto' : 'Adicionar Produto' ?>">
     </form>
  <table border>
         <tr>
@@ -52,10 +55,13 @@ require_once __DIR__ . "/cabeçalho.php";
     try{
         $sql="SELECT * FROM prod_venda WHERE id_venda = :id_venda ORDER BY id_prod_venda DESC";
         $stmt=$pdo->prepare($sql);
-        $stmt->execute([':id_venda' => $_GET['id_venda']]);
+        $stmt->execute([':id_venda' => $id_venda]);
         $produtos_venda = $stmt->fetchAll();
-            //falta fazer: calcular valor total com base na quantidade e no preço do produto
-    
+
+        //gambiarra pra atualizar o valor total do produto na venda, caso a quantidade seja alterada, porem só atualiza quando a página é recarregada, 
+        // então se o usuário adicionar um produto e não atualizar a página, o valor total da venda não será atualizado( arrumar isso dps(se possível))
+        updateProdutoPreco($pdo, $produtos_venda, $id_venda);
+        
         foreach($produtos_venda as $prod):
             ?>
             <tr>
@@ -75,7 +81,7 @@ require_once __DIR__ . "/cabeçalho.php";
                 </td>
                 <td>
                     <a href="../deletar.php?formulario=prod_venda&id=<?= $prod['id_prod_venda'] ?>">[x]</a> 
-                    <a href="insertprod.php?id=<?= $prod['id_prod'] ?>">[a]</a> 
+                    <a href="form_prodvenda.php?id=<?= $prod['id_prod_venda'] ?>&id_venda=<?= $prod['id_venda'] ?>">[a]</a> 
                 </td>
             </tr>
        <?php
@@ -86,6 +92,36 @@ require_once __DIR__ . "/cabeçalho.php";
          }catch(PDOException $e){
             echo "erro:". $e->getMessage();
          }
+
+         //calcula o valor total da venda com base nos produtos adicionados
+         function updateVendaTotal($pdo, $id_venda) {
+            $query = "SELECT SUM(pv.valor_venda_prd) AS total FROM prod_venda pv join venda v ON pv.id_venda = v.id_venda WHERE pv.id_venda = :id_venda";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([':id_venda' => $id_venda]);
+            $result = $stmt->fetch();
+            $updateQuery = "UPDATE venda SET valor_tot= :total WHERE id_venda = :id_venda";
+            $stmt = $pdo->prepare($updateQuery);
+            $stmt->execute([':total' => $result['total'], ':id_venda' => $id_venda]);
+        }
+
+        //calcula o valor total de cada produto
+        function updateProdutoPreco($pdo, $produtos_venda, $id_venda) {
+            foreach($produtos_venda as $prod_ven):
+                $subquery="SELECT preco FROM produto WHERE id_prod = :id_prod";
+                $stmt=$pdo->prepare($subquery);
+                $stmt->execute([':id_prod' => $prod_ven['id_prod']]);
+                $sub_produto = $stmt->fetch();
+                $total = $prod_ven['quant'] * $sub_produto['preco'];
+                $prod_ven['valor_venda_prd'] = $total;
+                $sub_subquery="UPDATE prod_venda SET valor_venda_prd = :valor_venda_prd WHERE id_prod_venda = :id_prod_venda";
+                $stmt=$pdo->prepare($sub_subquery);
+                $stmt->execute([
+                    ':valor_venda_prd' => $total,
+                    ':id_prod_venda' => $prod_ven['id_prod_venda']
+                ]);
+                updateVendaTotal($pdo, $id_venda);
+        endforeach;
+        }
     ?>
     
 </body>
