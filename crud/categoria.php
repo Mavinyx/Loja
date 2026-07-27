@@ -1,18 +1,18 @@
 <?php
-require_once "../conn.php";
+require_once __DIR__ . "/../conn.php";
 $tabela = "categoria";
 $campoId = "id_cat";
-require_once __DIR__ . "/cabeçalho.php";
+require_once __DIR__ . "/../includes/cabecalho.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inserir Categoria</title>
+    <title>Categorias</title>
 </head>
 <body>
-    <form action="inserts.php" method="post">
+    <form action="../actions/salvar.php" method="post">
        <input type="hidden" name="acao" value="<?= $acao ?>">
 
         <input type="hidden" name="formulario" value="<?= $tabela ?>">
@@ -51,8 +51,8 @@ require_once __DIR__ . "/cabeçalho.php";
                     <?= $categoria['descricao'] ?>
                 </td>
                 <td>
-                    <a href="../deletar.php?formulario=categoria&id=<?= $categoria['id_cat'] ?>">[x]</a> 
-                    <a href="insertcat.php?id=<?= $categoria['id_cat'] ?>">[a]</a> 
+                    <a href="../actions/deletar.php?formulario=categoria&id=<?= $categoria['id_cat'] ?>">[x]</a> 
+                    <a href="categoria.php?id=<?= $categoria['id_cat'] ?>">[a]</a> 
                 </td>
             </tr>
        <?php

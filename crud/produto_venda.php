@@ -1,8 +1,8 @@
 <?php
-require_once "../conn.php";
+require_once __DIR__ . "/../conn.php";
 $tabela = "prod_venda";
 $campoId = "id_prod_venda";
-require_once __DIR__ . "/cabeçalho.php";
+require_once __DIR__ . "/../includes/cabecalho.php";
 $id_venda = $_GET['id_venda'] ?? ($registro['id_venda'] ?? '');
 ?>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ $id_venda = $_GET['id_venda'] ?? ($registro['id_venda'] ?? '');
     <title>Produtos da Venda</title>
 </head>
 <body>
-    <form action="inserts.php" method="post">
+    <form action="../actions/salvar.php" method="post">
         <input type="hidden" name="acao" value="<?= $acao ?>">
 
         <input type="hidden" name="formulario" value="<?= $tabela ?>">
@@ -80,8 +80,8 @@ $id_venda = $_GET['id_venda'] ?? ($registro['id_venda'] ?? '');
                     <?= $prod['valor_venda_prd'] ?>
                 </td>
                 <td>
-                    <a href="../deletar.php?formulario=prod_venda&id=<?= $prod['id_prod_venda'] ?>">[x]</a> 
-                    <a href="form_prodvenda.php?id=<?= $prod['id_prod_venda'] ?>&id_venda=<?= $prod['id_venda'] ?>">[a]</a> 
+                    <a href="../actions/deletar.php?formulario=prod_venda&id=<?= $prod['id_prod_venda'] ?>">[x]</a> 
+                    <a href="produto_venda.php?id=<?= $prod['id_prod_venda'] ?>&id_venda=<?= $prod['id_venda'] ?>">[a]</a> 
                 </td>
             </tr>
        <?php

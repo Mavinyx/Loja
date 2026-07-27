@@ -1,5 +1,5 @@
 <?php
-require_once "../conn.php";
+require_once __DIR__ . "/../conn.php";
 if(isset($_GET['id'])){
     extract($_GET);
     $acao = 2;

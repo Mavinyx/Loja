@@ -1,18 +1,18 @@
 <?php
-require_once "../conn.php";
+require_once __DIR__ . "/../conn.php";
 $tabela = "endereco";
 $campoId = "id_end";
-require_once __DIR__ . "/cabeçalho.php";
+require_once __DIR__ . "/../includes/cabecalho.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Endereço</title>
+    <title>Endereços</title>
 </head>
 <body>
-    <form action="inserts.php" method="post">
+    <form action="../actions/salvar.php" method="post">
         <input type="hidden" name="acao" value="<?= $acao ?>">
         <input type="hidden" name="formulario" value="<?= $tabela ?>">
 
@@ -67,8 +67,8 @@ require_once __DIR__ . "/cabeçalho.php";
                     <?= $end['estado'] ?>
                 </td>
                   <td>
-                    <a href="../deletar.php?formulario=endereco&id=<?= $end['id_end'] ?>">[x]</a> 
-                    <a href="insertend.php?id=<?= $end['id_end'] ?>">[a]</a> 
+                    <a href="../actions/deletar.php?formulario=endereco&id=<?= $end['id_end'] ?>">[x]</a> 
+                    <a href="endereco.php?id=<?= $end['id_end'] ?>">[a]</a> 
                 </td>
             </tr>
         <?php

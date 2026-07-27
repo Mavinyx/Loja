@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require "../conn.php";
+require __DIR__ . "/../conn.php";
 
 if($_POST){
    
@@ -73,7 +73,7 @@ if($_POST){
         }
 
         if ($tabela == "prod_venda" && isset($dados['id_venda'])) {
-            header("Location: form_prodvenda.php?id_venda=" . $dados['id_venda']);
+            header("Location: ../crud/produto_venda.php?id_venda=" . $dados['id_venda']);
         } else {
             header("Location: ../index.php");
         }

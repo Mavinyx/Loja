@@ -1,5 +1,5 @@
 <?php
-require_once 'conn.php';
+require_once __DIR__ . '/../conn.php';
 
 $ids = [
     "produto" => "id_prod",
@@ -29,7 +29,7 @@ try {
     $sql="DELETE FROM $tabela WHERE $campoId = :id";
     $stmt=$pdo->prepare($sql);
     $stmt->execute([':id' => $id]);
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }catch(PDOException $e){
      echo "erro $e";

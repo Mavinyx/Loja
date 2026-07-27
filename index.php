@@ -6,11 +6,11 @@
     <title>Pagina inicial</title>
 </head>
 <body>
-    <a href="inserts/insertuser.php"> inserir usuario</a>
-    <a href="inserts/insertcat.php"> inserir categoria</a>
-    <a href="inserts/insertforn.php"> inserir fornecedor</a>
-    <a href="inserts/insertend.php"> inserir endereço </a>
-    <a href="inserts/insertprod.php"> inserir produto </a>
-    <a href="inserts/insertvenda.php"> registrar venda </a>
+    <a href="crud/usuario.php"> gerenciar usuarios</a>
+    <a href="crud/categoria.php"> gerenciar categorias</a>
+    <a href="crud/fornecedor.php"> gerenciar fornecedores</a>
+    <a href="crud/endereco.php"> gerenciar endereços </a>
+    <a href="crud/produto.php"> gerenciar produtos </a>
+    <a href="crud/venda.php"> gerenciar vendas </a>
 </body>
 </html>
