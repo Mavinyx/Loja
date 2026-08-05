@@ -7,7 +7,6 @@ use PDO;
 abstract class Model
 {
     protected static string $table = '';
-    // Unificando a nomenclatura para $pk
     protected static string $pk = 'id';
     protected array $attributes = [];
 
@@ -77,5 +76,21 @@ abstract class Model
         }
 
         return $success;
+    }
+    public static function all(): array{
+        $sql = sprintf("SELECT * FROM %s", static::$table);
+        $stmt = self::getPDO()->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function delete(): bool{
+        if (!isset($this->attributes[static::$pk])) {
+            return false;
+        }
+
+        $sql = sprintf("DELETE FROM %s WHERE %s = :id", static::$table, static::$pk);
+        $stmt = self::getPDO()->prepare($sql);
+        return $stmt->execute(['id' => $this->attributes[static::$pk]]);
     }
 }
