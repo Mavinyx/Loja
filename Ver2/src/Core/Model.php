@@ -1,38 +1,81 @@
 <?php
 
-abstract class ModeL{
+namespace App\Core;
 
-protected static ?PDO $pdo = null; //? significa que a variável pode ser de dois tipos PDO ou nulo
-//configs da tabela
-protected static String $table = '';
-protected static String $pk = 'id';
+use PDO;
 
-protected array $attributes = [];
-
-public static function setConnection(PDO $pdo): void{
-        self::$pdo = $pdo;
-}
-
-public function __set(string $key, $value){
-    $this->attributes[$key]=$value;
-}
-
-public function __get(string $key, $value){
-    return $this->attributes[$key] ?? null;
-}
-
-public function find(int $id): ?static //retorna um objeto da classe que chamou o método
+abstract class Model
 {
-    $sql = sprintf("SELECT * FROM %s WHERE %s = :id LIMIT 1", static::$table,static::$pk);
-    $stmt=self::$pdo->prepare($sql);
-    $stmt->execute(['id'=>$id]);
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    protected static string $table = '';
+    // Unificando a nomenclatura para $pk
+    protected static string $pk = 'id';
+    protected array $attributes = [];
 
-    if(!$data){
-        return null;
+    protected static function getPDO(): PDO
+    {
+        return Connection::getInstance();
     }
-    $instancia = new static();
-    $instancia->attibutes =$data;
-    return $instancia;
-}
+
+    public function __set(string $key, $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    public function __get(string $key)
+    {
+        return $this->attributes[$key] ?? null;
+    }
+
+    public static function find(int $id): ?static
+    {
+        $sql = sprintf("SELECT * FROM %s WHERE %s = :id LIMIT 1", static::$table, static::$pk);
+        
+        $stmt = self::getPDO()->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        
+        $data = $stmt->fetch();
+
+        if (!$data) {
+            return null;
+        }
+
+        $instance = new static();
+        $instance->attributes = $data;
+        
+        return $instance;
+    }
+
+    public function save(): bool
+    {
+
+        if (isset($this->attributes[static::$pk])) {
+            // return $this->update(); 
+            return false; //
+        }
+        
+        return $this->insert();
+    }
+
+    protected function insert(): bool
+    {
+        $columns = array_keys($this->attributes);
+        $placeholders = array_map(fn($col) => ':' . $col, $columns);
+
+        $sql = sprintf(
+            "INSERT INTO %s (%s) VALUES (%s)",
+            static::$table,
+            implode(', ', $columns),
+            implode(', ', $placeholders)
+        );
+
+        $stmt = self::getPDO()->prepare($sql);
+        $success = $stmt->execute($this->attributes);
+
+        if ($success) {
+            $chave = static::$pk;
+            $this->$chave = self::getPDO()->lastInsertId();
+        }
+
+        return $success;
+    }
 }

@@ -1,0 +1,11 @@
+
+# Composer 
+vendor/
+
+# Configurações 
+/config/config_db.php
+.env
+
+
+.DS_Store
+Thumbs.db
