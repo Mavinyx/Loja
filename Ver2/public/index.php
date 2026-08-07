@@ -32,27 +32,4 @@ try {
     echo "Erro na operação: " . $e->getMessage();
 }
     */
-if(isset($_GET['table'])){
-    $table = ucfirst($_GET['table']);
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form action="index.php" method="get">
-        <select value="table" name="table">
-            <?php
-             foreach($pdo->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'lojafix'") as $row){
-                echo "<option value='" . $row['table_name'] . "'>" . $row['table_name'] . "</option>";
-            }
-                ?>
-        </select>
-        <button type="submit">Submit</button>
-    </form>
-</body>
-</html>
+

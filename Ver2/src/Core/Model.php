@@ -48,8 +48,7 @@ abstract class Model
     {
 
         if (isset($this->attributes[static::$pk])) {
-            // return $this->update(); 
-            return false; //
+           return $this->update(); 
         }
         
         return $this->insert();
@@ -76,6 +75,27 @@ abstract class Model
         }
 
         return $success;
+    }
+
+    protected function update(): bool
+    {$chave = static::$pk;
+    $id = $this->attributes[$chave];
+    $atbAtualizar = $this->attributes;
+    unset($atbAtualizar[$chave]); // tira a chave primária do array de atributos para não tentar atualizar o valor dela
+
+    $columns = array_keys($atbAtualizar);
+    $setClause = implode(', ', array_map(fn($col) => "$col = :$col", $columns)); // deixa bonitinho pra query
+    $sql = sprintf(
+        "UPDATE %s SET %s WHERE %s = :pk_id",
+        static::$table,
+        $setClause,
+        $chave
+    );
+    $params = $atbAtualizar;
+    $params['pk_id'] = $id;
+    $stmt = self::getPDO()->prepare($sql);
+    
+    return $stmt->execute($params);
     }
     public static function all(): array{
         $sql = sprintf("SELECT * FROM %s", static::$table);
