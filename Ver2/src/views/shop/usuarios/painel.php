@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use App\Models\Usuario;
 use App\Models\Endereco;
@@ -69,7 +69,7 @@ $listaUsuarios = Usuario::all();
 
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Painel de Usuários</title>
@@ -96,7 +96,6 @@ $listaUsuarios = Usuario::all();
         </form>
     </div>
 
-    <hr>
 
     <table border="1">
         <tr><th>ID</th><th>Nome</th><th>Ações</th></tr>
