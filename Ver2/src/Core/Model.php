@@ -32,7 +32,7 @@ abstract class Model
         $stmt = self::getPDO()->prepare($sql);
         $stmt->execute(['id' => $id]);
         
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$data) {
             return null;
@@ -97,11 +97,12 @@ abstract class Model
     
     return $stmt->execute($params);
     }
+    
     public static function all(): array{
         $sql = sprintf("SELECT * FROM %s", static::$table);
         $stmt = self::getPDO()->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function delete(): bool{

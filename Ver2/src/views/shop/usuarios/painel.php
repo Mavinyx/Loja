@@ -4,7 +4,6 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use App\Models\Usuario;
 use App\Models\Endereco;
-use App\Core\Connection;
 
 $usuarioEdicao = null;
 $enderecoEdicao = null;
@@ -12,10 +11,7 @@ $enderecoEdicao = null;
 
 if (isset($_GET['deletar'])) {
     $id = (int) $_GET['deletar'];
-    $pdo = Connection::getInstance();
-    
-    $stmt = $pdo->prepare("DELETE FROM endereco WHERE id_user = :id");
-    $stmt->execute(['id' => $id]);
+    Endereco::deleteByUsuario($id);
 
     $usuario = Usuario::find($id);
     if ($usuario) $usuario->delete();
@@ -52,14 +48,7 @@ if ($_POST) {
 if (isset($_GET['editar'])) {
     $usuarioEdicao = Usuario::find((int) $_GET['editar']);
     if ($usuarioEdicao) {
-        $pdo = Connection::getInstance();
-        $stmt = $pdo->prepare("SELECT * FROM endereco WHERE id_user = :id LIMIT 1");
-        $stmt->execute(['id' => $usuarioEdicao->id_user]);
-        $endData = $stmt->fetch();
-        if ($endData) {
-            $enderecoEdicao = new Endereco();
-            $enderecoEdicao->attributes = $endData;
-        }
+        $enderecoEdicao = Endereco::findByUsuario($usuarioEdicao->id_user);
     }
 }
 
