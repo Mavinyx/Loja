@@ -20,5 +20,14 @@ class Prod_Venda extends Model
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public static function verifyProduct(?int $id_prod = null) : array {
+        if($id_prod === null){
+            return parent::all();
+        }
 
+        $query =  sprintf("SELECT * FROM %s WHERE id_prod= :id_prod", static::$table);
+        $stmt =self::getPDO()->prepare($query);
+        $stmt->execute([':id_prod'=> $id_prod]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

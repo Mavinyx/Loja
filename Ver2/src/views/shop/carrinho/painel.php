@@ -9,8 +9,10 @@ echo '<script>window.location.load();</script>';
 if(isset($_GET['deletar'])) {
     $id = (int) $_GET['deletar'];
     $venda = Venda::find($id);
-    if ($venda) {
-        $venda->delete();
+    if ($venda){
+        try{
+            $venda->delete();
+        }catch(PDOException $e){}
     }
     header('Location: painel.php');
     exit;

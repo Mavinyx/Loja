@@ -14,7 +14,11 @@ if (isset($_GET['deletar'])) {
     Endereco::deleteByUsuario($id);
 
     $usuario = Usuario::find($id);
-    if ($usuario) $usuario->delete();
+    if ($usuario){
+        try{
+            $usuario->delete();
+        }catch(PDOException $e){}
+    } 
     
     header('Location: painel.php');
     exit;

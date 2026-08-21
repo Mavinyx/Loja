@@ -7,7 +7,10 @@ if (isset($_GET['deletar'])) {
     $id = (int) $_GET['deletar'];
     $fornecedor = Fornecedor::find($id);
     if ($fornecedor) {
-        $fornecedor->delete();
+        try{
+            $fornecedor->delete();
+        }catch(PDOException $e){}
+        
     }
     header('Location: painel.php');
     exit;

@@ -7,7 +7,9 @@ if (isset($_GET['deletar'])) {
     $id = (int) $_GET['deletar'];
     $categoria = Categoria::find($id);
     if ($categoria) {
-        $categoria->delete();
+        try{
+            $categoria->delete();
+        }catch(PDOException $e){}
     }
     header('Location: painel.php');
     exit;

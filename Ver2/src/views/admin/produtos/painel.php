@@ -9,7 +9,9 @@ if(isset($_GET['deletar'])) {
     $id = (int) $_GET['deletar'];
     $produto = Produto::find($id);
     if ($produto) {
-        $produto->delete();
+        try{
+            $produto->delete();
+        }catch(PDOException $e){}
     }
     header('Location: painel.php');
     exit;

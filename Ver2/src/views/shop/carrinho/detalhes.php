@@ -5,7 +5,6 @@ use App\Models\Prod_Venda;
 use App\Models\Produto;
 use App\Models\Venda;
 
-
 $idVenda = $_GET['id_venda'] ?? $_POST['id_venda'] ?? null;
 $venda = $idVenda ? Venda::find((int) $idVenda) : null;
 
@@ -29,8 +28,10 @@ if ($_POST && isset($_POST['inserir'])) {
     $quant = (int) $_POST['quant'];
 
     $produto = Produto::find($id_prod);
-
+    $tem = $id_prod ? Prod_Venda::verifyProduct($id_prod) :[];
+    echo $tem;
     if ($produto && $venda && $quant > 0) {
+        if($tem != []){
         $valor_venda_prd = (float) $produto->preco * $quant;
 
         $novoProdVenda = new Prod_Venda();
@@ -42,8 +43,11 @@ if ($_POST && isset($_POST['inserir'])) {
         if ($novoProdVenda->save()) {
             $venda->atualizarTotal($valor_venda_prd);
         }
-
-        header('Location: detalhes.php?id_venda=' . $idVenda);
+        //header('Location: detalhes.php?id_venda=' . $idVenda);
+        echo 'funcionou';
+        }else{
+            //faltou a lógica pra adicionar a quantidade
+        }
         exit;
     }
     
