@@ -5,7 +5,6 @@ use App\Models\Usuario;
 use App\Models\Venda;
 //equivale a tabela venda
 $vendaEdicao = null;
-echo '<script>window.location.load();</script>';
 if(isset($_GET['deletar'])) {
     $id = (int) $_GET['deletar'];
     $venda = Venda::find($id);
