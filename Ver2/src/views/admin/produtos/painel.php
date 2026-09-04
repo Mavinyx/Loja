@@ -17,6 +17,7 @@ if(isset($_GET['deletar'])) {
     exit;
 }
 if($_POST){
+    try{
     $id_prod = $_POST['id_prod'] ?? null;
     $produto = new Produto();
     if ($id_prod) {
@@ -29,6 +30,10 @@ if($_POST){
     $produto->descricao = $_POST['descricao'];
     $produto->estoque = $_POST['estoque'];
     $produto->save();
+    }catch(InvalidArgumentException $e){
+        echo "Erro: " . $e->getMessage();
+    }
+   
     header('Location: painel.php');
     exit;
 }

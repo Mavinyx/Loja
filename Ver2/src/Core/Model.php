@@ -46,14 +46,17 @@ abstract class Model
 
     public function save(): bool
     {
-
+        $this->validate();
         if (isset($this->attributes[static::$pk])) {
            return $this->update(); 
         }
         
         return $this->insert();
     }
-
+    public function validate(): void
+    {
+        // Método a ser implementado nas classes filhas para validação de dados
+    }
     protected function insert(): bool
     {
         $columns = array_keys($this->attributes);
