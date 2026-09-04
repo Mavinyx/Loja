@@ -20,14 +20,17 @@ class Prod_Venda extends Model
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    public static function verifyProduct(?int $id_prod = null) : array {
+    public static function verifyProduct(?int $id_prod = null, ?int $id_venda = null) : array {
         if($id_prod === null){
-            return parent::all();
+            return [];
         }
 
-        $query =  sprintf("SELECT * FROM %s WHERE id_prod= :id_prod", static::$table);
+        $query =  sprintf("SELECT * FROM %s 
+         WHERE id_prod = :id_prod 
+         AND id_venda = :id_venda",
+        static::$table);
         $stmt =self::getPDO()->prepare($query);
-        $stmt->execute([':id_prod'=> $id_prod]);
+        $stmt->execute([':id_prod'=> $id_prod, ':id_venda' => $id_venda]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

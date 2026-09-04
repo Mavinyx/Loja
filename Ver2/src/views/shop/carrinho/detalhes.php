@@ -28,26 +28,37 @@ if ($_POST && isset($_POST['inserir'])) {
     $quant = (int) $_POST['quant'];
 
     $produto = Produto::find($id_prod);
-    $tem = $id_prod ? Prod_Venda::verifyProduct($id_prod) :[];
-    echo $tem;
+    $tem = Prod_Venda::verifyProduct($id_prod, $venda->id_venda);
     if ($produto && $venda && $quant > 0) {
-        if($tem != []){
-        $valor_venda_prd = (float) $produto->preco * $quant;
+        if(!empty($tem)){
+        // Produto já existe nessa venda
+        $produtoVenda = Prod_Venda::find($tem[0]['id_prod_venda']);
 
-        $novoProdVenda = new Prod_Venda();
-        $novoProdVenda->id_venda = $venda->id_venda; 
-        $novoProdVenda->id_prod = $id_prod;
-        $novoProdVenda->quant = $quant;
-        $novoProdVenda->valor_venda_prd = $valor_venda_prd;
+        $valor_adicionar = (float) $produto->preco * $quant;
 
-        if ($novoProdVenda->save()) {
-            $venda->atualizarTotal($valor_venda_prd);
+        $produtoVenda->quant += $quant;
+        $produtoVenda->valor_venda_prd += $valor_adicionar;
+
+        if ($produtoVenda->save()) {
+            $venda->atualizarTotal($valor_adicionar);
         }
-        //header('Location: detalhes.php?id_venda=' . $idVenda);
         echo 'funcionou';
         }else{
-            //faltou a lógica pra adicionar a quantidade
+           // Produto ainda não existe nessa venda
+            $valor_venda_prd = (float) $produto->preco * $quant;
+
+            $novoProdVenda = new Prod_Venda();
+
+            $novoProdVenda->id_venda = $venda->id_venda;
+            $novoProdVenda->id_prod = $id_prod;
+            $novoProdVenda->quant = $quant;
+            $novoProdVenda->valor_venda_prd = $valor_venda_prd;
+
+            if ($novoProdVenda->save()) {
+                $venda->atualizarTotal($valor_venda_prd);
+            }
         }
+         header('Location: detalhes.php?id_venda=' . $idVenda);
         exit;
     }
     
