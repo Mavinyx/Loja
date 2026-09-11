@@ -14,18 +14,7 @@ if (isset($_GET['deletar'])) {
     header('Location: painel.php');
     exit;
 }
-if($_POST) {
-    $id_categoria = $_POST['id_cat'] ?? null;
-    $categoria = new Categoria();
-    if ($id_categoria) {
-        $categoria->id_cat = $id_categoria;
-    }
-    $categoria->nome_cat = $_POST['nome_cat'];
-    $categoria->descricao= $_POST['descricao'];
-    $categoria->save();
-    header('Location: painel.php');
-    exit;
-}
+
 if (isset($_GET['editar'])) {
     $categoriaEdicao = Categoria::find((int) $_GET['editar']);
 }
@@ -42,7 +31,7 @@ $listaCategorias = Categoria::all();
    
         <h2>Gerenciamento de Categorias</h2>
     </div>
-    <form action="" method="POST">
+    <form action="../../../../public/index.php?modulo=categoria&acao=save" method="POST">
         <input type="hidden" name="id_cat" value="<?= $categoriaEdicao ? $categoriaEdicao->id_cat : '' ?>">
         <label for="nome_cat">Nome da Categoria:</label>
         <input type="text" id="nome_cat" name="nome_cat" value="<?= $categoriaEdicao ? $categoriaEdicao->nome_cat : '' ?>" required>
